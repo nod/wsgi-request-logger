@@ -106,7 +106,7 @@ class ApacheFormatters(object):
           https://pypi.python.org/pypi/TinyLogAnalyzer
         """
         rt_ms = kw.get('rt_ms')
-        return ApacheFormatters.format_NCSA_log(*args) + " {}/{}".format(int(rt_ms/1000000), rt_ms)
+        return ApacheFormatters.format_NCSA_log(*args) + " {:0.2f}/{}".format((rt_ms/1000000), rt_ms)
 
 def log(handlers, formatter=ApacheFormatter(), **kw):
     '''Decorator for logging middleware.'''
