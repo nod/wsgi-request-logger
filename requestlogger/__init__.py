@@ -27,9 +27,10 @@ except AttributeError:
 class WSGILogger(object):
     ''' This is the generalized WSGI middleware for any style request logging. '''
 
-    def __init__(self, application, handlers, formatter=None, **kw):
+    def __init__(self, application, handlers, formatter=None, name=None, **kw):
+        name = name or 'requestlogger'
         self.formatter = formatter or WSGILogger.standard_formatter
-        self.logger = logging.getLogger('requestlogger')
+        self.logger = logging.getLogger(name)
         self.logger.setLevel(logging.DEBUG)
         for handler in handlers:
             self.logger.addHandler(handler)
@@ -73,7 +74,7 @@ class ApacheFormatters(object):
           "%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-agent}i\""
           see http://httpd.apache.org/docs/current/mod/mod_log_config.html#formats
         """
-        
+
         # Let's collect log values
         val = dict()
         val['host'] = environ.get('REMOTE_ADDR', '')
@@ -91,9 +92,9 @@ class ApacheFormatters(object):
         val['size'] = content_length
         val['referer'] = environ.get('HTTP_REFERER', '')
         val['agent'] = environ.get('HTTP_USER_AGENT', '')
-        
+
         # see http://docs.python.org/3/library/string.html#format-string-syntax
-        FORMAT = '{host} {logname} {user} [{time}] "{request}" '
+        FORMAT = 'lvlr.wsgi {host} {logname} {user} [{time}] "{request}" '
         FORMAT += '{status} {size} "{referer}" "{agent}"'
         return FORMAT.format(**val)
 
